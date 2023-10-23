@@ -46,6 +46,7 @@ public class FormationServiceImpl implements FormationService {
        for (Formation formation: formationList){
             FormationDto formationDto=new FormationDto();
             formation.setPersonelDetails(personel);
+
             Formation formation1= formationRepo.save(formation);
             BeanUtils.copyProperties(formation1, formationDto);
             formationDtos.add(formationDto);

@@ -66,10 +66,8 @@ public class UploadFormationExcel {
                                         && formationFromExcel.getDateFin()!=null){
                                     Calendar m_calendar=Calendar.getInstance();
                                     m_calendar.setTime(formationFromExcel.getDateDebut());
-                                    int nMonth1=12*m_calendar.get(Calendar.YEAR)+m_calendar.get(Calendar.MONTH);
-                                    m_calendar.setTime(formationFromExcel.getDateFin());
-                                    int nMonth2=12*m_calendar.get(Calendar.YEAR)+m_calendar.get(Calendar.MONTH);
-                                    formationFromExcel.setMonth(java.lang.Math.abs(nMonth2-nMonth1));
+                                    int nMonth1=m_calendar.get(Calendar.MONTH);
+                                    formationFromExcel.setMonth(java.lang.Math.abs(nMonth1)+1);
                                 }
                             }
                         }
