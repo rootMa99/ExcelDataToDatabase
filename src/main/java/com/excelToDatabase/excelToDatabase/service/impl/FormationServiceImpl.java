@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -46,7 +47,10 @@ public class FormationServiceImpl implements FormationService {
        for (Formation formation: formationList){
             FormationDto formationDto=new FormationDto();
             formation.setPersonelDetails(personel);
-
+            Calendar calendar=Calendar.getInstance();
+            calendar.setTime(formation.getDateDebut());
+            int month=calendar.get(Calendar.MONTH);
+            formation.setMonth(month+1);
             Formation formation1= formationRepo.save(formation);
             BeanUtils.copyProperties(formation1, formationDto);
             formationDtos.add(formationDto);
@@ -99,18 +103,20 @@ public class FormationServiceImpl implements FormationService {
             formation.setDureePerHour(formationDto.getDureePerHour());
         if (formationDto.getDateDebut()!=null){
             formation.setDateDebut(formationDto.getDateDebut());
+            Calendar m_calendar=Calendar.getInstance();
+            m_calendar.setTime(formationDto.getDateDebut());
+            int nMonth1=m_calendar.get(Calendar.MONTH);
+            formation.setMonth(java.lang.Math.abs(nMonth1)+1);
         }
         if (formationDto.getDateFin()!=null){
             formation.setDateFin(formationDto.getDateFin());
         }
-            formation.setMonth(formationDto.getMonth());
         if (formationDto.getPresentataire()!=null){
             formation.setPresentataire(formationDto.getPresentataire());
         }
         if (formationDto.getFormatteur()!=null){
             formation.setFormatteur(formationDto.getFormatteur());
         }
-            formation.setEvaluationAFrois(formationDto.isEvaluationAFrois());
 
         if (formationDto.getBilan()!=null){
             formation.setBilan(formationDto.getBilan());

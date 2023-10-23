@@ -7,6 +7,10 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.BeanUtils;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,8 +25,8 @@ public class FormationController {
     private FormationService formationService;
 
     @PostMapping(path = "/{matricule}")
-    public List<FormationRest> addFormation(@PathVariable long matricule,
-                                            @RequestBody List<FormationRequest> formationRequest){
+    public CollectionModel<FormationRest> addFormation(@PathVariable long matricule,
+                                                       @RequestBody List<FormationRequest> formationRequest){
         List<FormationDto>formationDtoList=new ArrayList<>();
         for (FormationRequest formationRequest1:formationRequest){
             FormationDto formationDto=new FormationDto();
@@ -37,7 +41,11 @@ public class FormationController {
             BeanUtils.copyProperties(formationDto, formationRest);
             formationRests.add(formationRest);
         }
-        return formationRests;
+        Link personelLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
+                .getPersonel(matricule)).withRel("personel");
+        Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
+                .getPersonelData()).withRel("personels");
+        return CollectionModel.of(formationRests, personelsLink, personelLink);
     }
     @PostMapping(path = "/uploadFormation")
     public List<FormationFromExcel> uploadFormationFromExcel(@RequestParam("file")MultipartFile file)
@@ -47,24 +55,32 @@ public class FormationController {
     }
 
     @PutMapping(path = "/{formationId}")
-    public FormationRestPersonel updateFormation(@PathVariable String formationId,
-                                                 @RequestBody FormationRequest formationRequest){
+    public EntityModel<FormationRestPersonel> updateFormation(@PathVariable String formationId,
+                                                              @RequestBody FormationRequest formationRequest){
         ModelMapper mp =new ModelMapper();
         mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         FormationDto formationDto=mp.map(formationRequest, FormationDto.class);
         FormationRest formationRest=formationService.updateFormation(formationId, formationDto);
         FormationRestPersonel formationRestPersonel=new FormationRestPersonel();
         BeanUtils.copyProperties(formationRest,formationRestPersonel);
-        return formationRestPersonel;
+        Link personelLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
+                .getPersonel(formationRest.getPersonelDetails().getMatricule())).withRel("personel");
+        Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
+                .getPersonelData()).withRel("personels");
+        return EntityModel.of(formationRestPersonel, personelsLink, personelLink);
     }
 
     @DeleteMapping(path = "/{formationId}")
-    public OperationStatusResult deleteFormation(@PathVariable String formationId){
+    public EntityModel<OperationStatusResult> deleteFormation(@PathVariable String formationId){
         OperationStatusResult operation=new OperationStatusResult();
         operation.setOperationName("DELETE");
         formationService.deleteFormation(formationId);
         operation.setOperationResult(OperationStatus.SUCCESS.name());
-        return operation;
+        Link personnelLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
+                .getPersonelData()).withRel("personels");
+        Link personel= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class))
+                .slash("personel").withRel("Matricule");
+        return EntityModel.of(operation, personnelLink, personel);
     }
 
 
