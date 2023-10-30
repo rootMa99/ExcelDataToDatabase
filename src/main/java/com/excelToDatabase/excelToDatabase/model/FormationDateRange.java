@@ -14,4 +14,6 @@ import java.util.Date;
 public class FormationDateRange {
     private Date startDate;
     private Date endDate;
+    private String type;
+    private String categorieFormation;
 }
