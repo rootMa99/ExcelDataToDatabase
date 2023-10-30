@@ -48,6 +48,34 @@ public class FormationServiceImpl implements FormationService {
     }
 
     @Override
+    public List<FormationDto> getFormationByType(String type) {
+        ModelMapper mp= new ModelMapper();
+        mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        List<Formation> formationList= formationRepo.findAllByType(type);
+        List<FormationDto> formationDtoList= new ArrayList<>();
+        for (Formation f: formationList){
+            FormationDto fdto= mp.map(f, FormationDto.class);
+            formationDtoList.add(fdto);
+        }
+        return formationDtoList;
+    }
+
+    @Override
+    public List<FormationDto> getFormationByCategorie(String categorie) {
+
+        ModelMapper mp=new ModelMapper();
+        mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        List<Formation> formationList= formationRepo.findAllByCategorieFormation(categorie);
+        List<FormationDto> formationDtos=new ArrayList<>();
+        for (Formation f: formationList){
+            FormationDto fdto= mp.map(f, FormationDto.class);
+            formationDtos.add(fdto);
+        }
+
+        return formationDtos;
+    }
+
+    @Override
     public List<FormationDto> addFormationToPersonel(long matricule, List<FormationDto> formations) {
         List<Formation> formationList= new ArrayList<>();
         for (FormationDto formation : formations){

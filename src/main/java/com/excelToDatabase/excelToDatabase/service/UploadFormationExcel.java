@@ -77,11 +77,8 @@ public class UploadFormationExcel {
                             if (cell.getCellType() == CellType.BOOLEAN) {
                                 formationFromExcel.setEvaluationAFrois(cell.getBooleanCellValue());
                             }else {
-                                if (cell.getStringCellValue().equals("oui")||cell.getStringCellValue().equals("Oui")){
-                                    formationFromExcel.setEvaluationAFrois(true);
-                                }else {
-                                    formationFromExcel.setEvaluationAFrois(false);
-                                }
+                                formationFromExcel.setEvaluationAFrois(cell.getStringCellValue().equals("oui")
+                                        || cell.getStringCellValue().equals("Oui"));
                             }
                         }
                         case 14->formationFromExcel.setBilan(cell.getStringCellValue());

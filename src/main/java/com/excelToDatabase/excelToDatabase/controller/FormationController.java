@@ -43,8 +43,10 @@ public class FormationController {
     }
 
     @PostMapping(path = "/{matricule}")
-    public CollectionModel<FormationRest> addFormation(@PathVariable long matricule,
+    public CollectionModel<FormationPersonelRest> addFormation(@PathVariable long matricule,
                                                        @RequestBody List<FormationRequest> formationRequest){
+        ModelMapper mp= new ModelMapper();
+        mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         List<FormationDto>formationDtoList=new ArrayList<>();
         for (FormationRequest formationRequest1:formationRequest){
             FormationDto formationDto=new FormationDto();
@@ -53,10 +55,12 @@ public class FormationController {
         }
         List<FormationDto> formationDtos=
                 formationService.addFormationToPersonel(matricule,formationDtoList);
-        List<FormationRest>formationRests=new ArrayList<>();
+        List<FormationPersonelRest>formationRests=new ArrayList<>();
         for (FormationDto formationDto: formationDtos){
-            FormationRest formationRest=new FormationRest();
+            FormationPersonelRest formationRest=new FormationPersonelRest();
             BeanUtils.copyProperties(formationDto, formationRest);
+            formationRest.setPersonelDetails(mp.map(formationDto.getPersonelDetails()
+                    , PersonelFormationRest.class));
             formationRests.add(formationRest);
         }
         Link personelLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
@@ -65,11 +69,37 @@ public class FormationController {
                 .getPersonelData()).withRel("personels");
         return CollectionModel.of(formationRests, personelsLink, personelLink);
     }
+    @GetMapping(path = "/formations/type")
+    public List<FormationPersonelRest> getFormationByTYpe(@RequestBody FormationRequest type){
+        ModelMapper mp= new ModelMapper();
+        mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        List<FormationDto> formationDtoList=formationService.getFormationByType(type.getType());
+        List<FormationPersonelRest> formationPersonelRestList= new ArrayList<>();
+        for (FormationDto fdto: formationDtoList){
+            FormationPersonelRest fpr= mp.map(fdto , FormationPersonelRest.class);
+            fpr.setPersonelDetails(mp.map(fdto.getPersonelDetails(), PersonelFormationRest.class));
+            formationPersonelRestList.add(fpr);
+        }
+        return formationPersonelRestList;
+    }
+    @GetMapping(path = "/formations/categorie")
+    public List<FormationPersonelRest> getFormationByCategorie(@RequestBody FormationRequest categorie){
+        ModelMapper mp=new ModelMapper();
+        mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        List<FormationPersonelRest> fprs=new ArrayList<>();
+        List<FormationDto> fdtos= formationService.getFormationByCategorie(categorie.getCategorieFormation());
+        for (FormationDto f: fdtos){
+            FormationPersonelRest fpr= mp.map(f,FormationPersonelRest.class);
+            fpr.setPersonelDetails(mp.map(f.getPersonelDetails(), PersonelFormationRest.class));
+            fprs.add(fpr);
+        }
+
+        return fprs;
+    }
     @PostMapping(path = "/uploadFormation")
     public List<FormationFromExcel> uploadFormationFromExcel(@RequestParam("file")MultipartFile file)
             throws IllegalAccessException {
-        List<FormationFromExcel>notFound= formationService.addFormationFromExcel(file);
-        return notFound;
+        return formationService.addFormationFromExcel(file);
     }
 
     @PutMapping(path = "/{formationId}")

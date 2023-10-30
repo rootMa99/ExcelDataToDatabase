@@ -13,6 +13,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class FormationRequest {
+    private String formationId;
     private String type;
     private String categorieFormation;
     private String modalite;
