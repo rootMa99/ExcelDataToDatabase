@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -31,6 +32,21 @@ public class FormationServiceImpl implements FormationService {
     private PersonelRepo personelRepo;
     private Utils utils;
     private FormationRepo formationRepo;
+
+
+    @Override
+    public List<FormationDto> getFormationsInDateRange(Date startDate, Date endDate) {
+        ModelMapper mp= new ModelMapper();
+        mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        List<Formation> formationList= formationRepo.findAllFormationByDateDebutBetween(startDate, endDate);
+        List<FormationDto> formationDtos= new ArrayList<>();
+        for (Formation f: formationList){
+            FormationDto formationDto= mp.map(f, FormationDto.class);
+            formationDtos.add(formationDto);
+        }
+        return formationDtos;
+    }
+
     @Override
     public List<FormationDto> addFormationToPersonel(long matricule, List<FormationDto> formations) {
         List<Formation> formationList= new ArrayList<>();

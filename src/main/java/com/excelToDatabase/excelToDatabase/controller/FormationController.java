@@ -24,6 +24,24 @@ public class FormationController {
 
     private FormationService formationService;
 
+
+
+    @GetMapping(path = "/formations")
+    public List<FormationPersonelRest> getFormationByDateRange(@RequestBody FormationDateRange fdr){
+        ModelMapper mp= new ModelMapper();
+        mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+        List<FormationDto> formationDtoList= formationService.getFormationsInDateRange(fdr.getStartDate()
+                ,fdr.getEndDate() );
+        List<FormationPersonelRest> fprList=new ArrayList<>();
+        for (FormationDto fdto: formationDtoList){
+            FormationPersonelRest fpr=mp.map(fdto,FormationPersonelRest.class);
+            fpr.setPersonelDetails(mp.map(fdto.getPersonelDetails(), PersonelFormationRest.class));
+            fprList.add(fpr);
+        }
+        return fprList;
+    }
+
     @PostMapping(path = "/{matricule}")
     public CollectionModel<FormationRest> addFormation(@PathVariable long matricule,
                                                        @RequestBody List<FormationRequest> formationRequest){

@@ -5,6 +5,7 @@ import com.excelToDatabase.excelToDatabase.model.FormationFromExcel;
 import com.excelToDatabase.excelToDatabase.model.FormationRest;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
 
 public interface FormationService {
@@ -13,5 +14,6 @@ public interface FormationService {
 
 
     FormationRest updateFormation(String formationId, FormationDto formationDto);
+    List<FormationDto> getFormationsInDateRange(Date startDate, Date endDate);
     void deleteFormation(String formationId);
 }
