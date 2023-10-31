@@ -80,8 +80,21 @@ public class FormationServiceImpl implements FormationService {
                                                                          Date startDate, Date endDate) {
         ModelMapper mp= new ModelMapper();
         mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        List<Formation> formationList= formationRepo.
-                findAllByCategorieFormationAndTypeAndDateDebutBetween(categorie, type, startDate, endDate);
+        List<Formation> formationList= new ArrayList<>();
+
+        if(categorie!=null && type!=null && startDate!=null && endDate!=null){
+            formationList= formationRepo.
+                    findAllByCategorieFormationAndTypeAndDateDebutBetween(categorie, type, startDate, endDate);
+        }
+
+        if(categorie==null){
+            formationList= formationRepo.
+                    findAllByTypeAndDateDebutBetween(type, startDate, endDate);
+        }
+        if(type==null){
+            formationList= formationRepo.findAllByCategorieFormationAndDateDebutBetween(categorie, startDate, endDate);
+        }
+
         List<FormationDto> formationDtoList = new ArrayList<>();
         for (Formation f: formationList){
             FormationDto fd= mp.map(f, FormationDto.class);
@@ -187,9 +200,8 @@ public class FormationServiceImpl implements FormationService {
         }catch (Exception e){
             throw new RuntimeException("Something Went Wrong");
         }
-        FormationRest formationRest=mp.map(formation1,FormationRest.class);
 
-        return formationRest;
+        return mp.map(formation1,FormationRest.class);
     }
 
     @Override
