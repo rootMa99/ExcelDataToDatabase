@@ -24,6 +24,32 @@ public class FormationController {
 
     private FormationService formationService;
 
+
+
+    @GetMapping(path = "/formations/type/categorie/{fonction}")
+    public CollectionModel<FormationPersonelRest> getFormationByCatTypeRangeFonc(@PathVariable String fonction,
+                                                                      @RequestBody FormationDateRange fdr){
+        ModelMapper mp=new ModelMapper();
+        mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        List<FormationDto> fdto= formationService.getFormationByCategorieAndTypeAndDateRangeAndFonction
+                (fdr.getCategorieFormation(), fdr.getType(), fdr.getStartDate(), fdr.getEndDate(), fonction);
+        List<FormationPersonelRest> fpr=new ArrayList<>();
+
+        for (FormationDto f:fdto){
+            FormationPersonelRest formationPersonelRest= mp.map(f, FormationPersonelRest.class);
+            formationPersonelRest.setPersonelDetails(mp.map(f.getPersonelDetails(), PersonelFormationRest.class));
+            Link personDetailsSelfLink = Link.of("/personel/personel/" + formationPersonelRest.getPersonelDetails().getMatricule());
+            formationPersonelRest.getPersonelDetails().add(personDetailsSelfLink);
+            fpr.add(formationPersonelRest);
+        }
+        Link selfLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FormationController.class)
+                .getFormationByCatTypeRangeFonc(fonction, fdr)).withSelfRel();
+        Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
+                .getPersonelData()).withRel("personels");
+
+        return CollectionModel.of(fpr);
+    }
+
     @GetMapping(path = "/formations/type/categorie")
     public CollectionModel<FormationPersonelRest> getFormationByCatTypeRange(@RequestBody FormationDateRange fdr){
         ModelMapper mp=new ModelMapper();
@@ -142,19 +168,20 @@ public class FormationController {
     }
 
     @PutMapping(path = "/{formationId}")
-    public EntityModel<FormationRestPersonel> updateFormation(@PathVariable String formationId,
+    public EntityModel<FormationPersonelRest> updateFormation(@PathVariable String formationId,
                                                               @RequestBody FormationRequest formationRequest){
         ModelMapper mp =new ModelMapper();
         mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         FormationDto formationDto=mp.map(formationRequest, FormationDto.class);
         FormationRest formationRest=formationService.updateFormation(formationId, formationDto);
-        FormationRestPersonel formationRestPersonel=new FormationRestPersonel();
-        BeanUtils.copyProperties(formationRest,formationRestPersonel);
+        FormationPersonelRest formationRestPersonel=mp.map(formationRest, FormationPersonelRest.class);
+        formationRestPersonel.setPersonelDetails(mp.map(formationRest.getPersonelDetails(), PersonelFormationRest.class));
         Link personelLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
                 .getPersonel(formationRest.getPersonelDetails().getMatricule())).withRel("personel");
+        formationRestPersonel.getPersonelDetails().add(personelLink);
         Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
                 .getPersonelData()).withRel("personels");
-        return EntityModel.of(formationRestPersonel, personelsLink, personelLink);
+        return EntityModel.of(formationRestPersonel, personelsLink);
     }
 
     @DeleteMapping(path = "/{formationId}")

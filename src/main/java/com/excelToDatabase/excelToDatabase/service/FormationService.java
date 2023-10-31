@@ -19,5 +19,7 @@ public interface FormationService {
     List<FormationDto> getFormationByCategorie(String categorie);
     List<FormationDto> getFormationByCategorieAndTypeAndDateRange(String categorie, String type,
                                                                   Date startDate, Date endDate);
+    List<FormationDto> getFormationByCategorieAndTypeAndDateRangeAndFonction(String categorie, String type,
+                                                                  Date startDate, Date endDate, String fonction);
     void deleteFormation(String formationId);
 }

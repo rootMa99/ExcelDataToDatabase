@@ -35,6 +35,25 @@ public class FormationServiceImpl implements FormationService {
 
 
     @Override
+    public List<FormationDto> getFormationByCategorieAndTypeAndDateRangeAndFonction
+            (String categorie, String type, Date startDate, Date endDate, String fonction) {
+
+        ModelMapper mp=new ModelMapper();
+        mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        List<Formation> formationList= formationRepo.
+                findAllByCategorieFormationAndTypeAndDateDebutBetweenAndPersonelDetailsFonctionEntreprise
+                        (categorie, type, startDate,endDate,fonction);
+        List<FormationDto> fdto= new ArrayList<>();
+
+        for (Formation f: formationList){
+            FormationDto formationDto= mp.map(f, FormationDto.class);
+            fdto.add(formationDto);
+        }
+
+        return fdto;
+    }
+
+    @Override
     public List<FormationDto> getFormationsInDateRange(Date startDate, Date endDate) {
         ModelMapper mp= new ModelMapper();
         mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
