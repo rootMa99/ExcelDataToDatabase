@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.Date;
 
@@ -12,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Setter
 @Getter
-public class FormationRestPersonel {
+public class FormationRestPersonel extends RepresentationModel<FormationPersonelRest> {
 
     private String formationId;
     private String type;

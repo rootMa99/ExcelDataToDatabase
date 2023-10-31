@@ -25,7 +25,7 @@ public class FormationController {
     private FormationService formationService;
 
     @GetMapping(path = "/formations/type/categorie")
-    public List<FormationPersonelRest> getFormationByCatTypeRange(@RequestBody FormationDateRange fdr){
+    public CollectionModel<FormationPersonelRest> getFormationByCatTypeRange(@RequestBody FormationDateRange fdr){
         ModelMapper mp=new ModelMapper();
         mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         List<FormationDto> formationDtoList= formationService.
@@ -35,15 +35,20 @@ public class FormationController {
         for (FormationDto f: formationDtoList){
             FormationPersonelRest formationPersonelRest= mp.map(f, FormationPersonelRest.class);
             formationPersonelRest.setPersonelDetails(mp.map(f.getPersonelDetails(), PersonelFormationRest.class));
+            Link personDetailsSelfLink = Link.of("/personel/personel/" + formationPersonelRest.getPersonelDetails().getMatricule());
+            formationPersonelRest.getPersonelDetails().add(personDetailsSelfLink);
             formationPersonelRestList.add(formationPersonelRest);
         }
+        Link selfLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FormationController.class)
+                .getFormationByCatTypeRange(fdr)).withSelfRel();
+        Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
+                .getPersonelData()).withRel("personels");
 
-
-        return formationPersonelRestList;
+        return CollectionModel.of(formationPersonelRestList, selfLink, personelsLink);
     }
 
     @GetMapping(path = "/formations")
-    public List<FormationPersonelRest> getFormationByDateRange(@RequestBody FormationDateRange fdr){
+    public CollectionModel<FormationPersonelRest> getFormationByDateRange(@RequestBody FormationDateRange fdr){
         ModelMapper mp= new ModelMapper();
         mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
@@ -53,9 +58,16 @@ public class FormationController {
         for (FormationDto fdto: formationDtoList){
             FormationPersonelRest fpr=mp.map(fdto,FormationPersonelRest.class);
             fpr.setPersonelDetails(mp.map(fdto.getPersonelDetails(), PersonelFormationRest.class));
+            Link personDetailsSelfLink = Link.of("/personel/personel/" + fpr.getPersonelDetails().getMatricule());
+            fpr.getPersonelDetails().add(personDetailsSelfLink);
             fprList.add(fpr);
         }
-        return fprList;
+
+        Link selfLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FormationController.class)
+                .getFormationByDateRange(fdr)).withSelfRel();
+        Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
+                .getPersonelData()).withRel("personels");
+        return CollectionModel.of(fprList, selfLink, personelsLink);
     }
 
     @PostMapping(path = "/{matricule}")
@@ -86,7 +98,7 @@ public class FormationController {
         return CollectionModel.of(formationRests, personelsLink, personelLink);
     }
     @GetMapping(path = "/formations/type")
-    public List<FormationPersonelRest> getFormationByTYpe(@RequestBody FormationRequest type){
+    public CollectionModel<FormationPersonelRest> getFormationByTYpe(@RequestBody FormationRequest type){
         ModelMapper mp= new ModelMapper();
         mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         List<FormationDto> formationDtoList=formationService.getFormationByType(type.getType());
@@ -94,12 +106,18 @@ public class FormationController {
         for (FormationDto fdto: formationDtoList){
             FormationPersonelRest fpr= mp.map(fdto , FormationPersonelRest.class);
             fpr.setPersonelDetails(mp.map(fdto.getPersonelDetails(), PersonelFormationRest.class));
+            Link personDetailsSelfLink = Link.of("/personel/personel/" + fpr.getPersonelDetails().getMatricule());
+            fpr.getPersonelDetails().add(personDetailsSelfLink);
             formationPersonelRestList.add(fpr);
         }
-        return formationPersonelRestList;
+        Link selfLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FormationController.class)
+                .getFormationByTYpe(type)).withSelfRel();
+        Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
+                .getPersonelData()).withRel("personels");
+        return CollectionModel.of(formationPersonelRestList);
     }
     @GetMapping(path = "/formations/categorie")
-    public List<FormationPersonelRest> getFormationByCategorie(@RequestBody FormationRequest categorie){
+    public CollectionModel<FormationPersonelRest> getFormationByCategorie(@RequestBody FormationRequest categorie){
         ModelMapper mp=new ModelMapper();
         mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         List<FormationPersonelRest> fprs=new ArrayList<>();
@@ -107,10 +125,15 @@ public class FormationController {
         for (FormationDto f: fdtos){
             FormationPersonelRest fpr= mp.map(f,FormationPersonelRest.class);
             fpr.setPersonelDetails(mp.map(f.getPersonelDetails(), PersonelFormationRest.class));
+            Link personDetailsSelfLink = Link.of("/personel/personel/" + fpr.getPersonelDetails().getMatricule());
+            fpr.getPersonelDetails().add(personDetailsSelfLink);
             fprs.add(fpr);
         }
-
-        return fprs;
+        Link selfLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FormationController.class)
+                .getFormationByCategorie(categorie)).withSelfRel();
+        Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
+                .getPersonelData()).withRel("personels");
+        return CollectionModel.of(fprs, selfLink, personelsLink);
     }
     @PostMapping(path = "/uploadFormation")
     public List<FormationFromExcel> uploadFormationFromExcel(@RequestParam("file")MultipartFile file)
