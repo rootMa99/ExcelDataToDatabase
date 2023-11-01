@@ -45,17 +45,11 @@ public class PersonelController {
     public CollectionModel<PersonelRest> getPersonelData(){
 
         List <PersonelRest> personels= personelService.getPersonels();
-        Type type= new TypeToken <List<PersonelRest>>(){}.getType();
-        List<PersonelRest> personelRestList=new ModelMapper().map(personels,type);
-        for (PersonelRest person:personelRestList){
-            Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
-                    .getPersonel(person.getMatricule())).withSelfRel();
-            person.add(selfLink);
-        }
         Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
                 .getPersonelData()).withSelfRel();
-
-        return CollectionModel.of(personels, selfLink);
+        Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
+                .getPersonelData()).withRel("personels");
+        return CollectionModel.of(personels, selfLink, personelsLink);
     }
     @GetMapping(path = "/personel/{matricule}")
     public EntityModel<PersonelRest> getPersonel(@PathVariable long matricule){

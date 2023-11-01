@@ -50,7 +50,6 @@ public class FormationController {
                 .getFormationByCatTypeRangeFonc(fdr)).withSelfRel();
         Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
                 .getPersonelData()).withRel("personels");
-
         return CollectionModel.of(fpr);
     }
 
@@ -144,7 +143,7 @@ public class FormationController {
                 .getFormationByTYpe(type)).withSelfRel();
         Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
                 .getPersonelData()).withRel("personels");
-        return CollectionModel.of(formationPersonelRestList);
+        return CollectionModel.of(formationPersonelRestList, selfLink, personelsLink);
     }
     @GetMapping(path = "/formations/categorie")
     public CollectionModel<FormationPersonelRest> getFormationByCategorie(@RequestBody FormationRequest categorie){

@@ -48,8 +48,7 @@ public class PersonelService {
         mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         Personel persone=personelRepo.findByMatricule(matricule);
         if (persone==null) throw new FileStorageException("Personnel Not Found Matricule is: "+matricule);
-        PersonelRest personelRest= mp.map(persone, PersonelRest.class);
-        return personelRest;
+        return mp.map(persone, PersonelRest.class);
     }
 
 

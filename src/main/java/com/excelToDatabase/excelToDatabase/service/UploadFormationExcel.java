@@ -51,7 +51,12 @@ public class UploadFormationExcel {
                             if (cell.getCellType()==CellType.NUMERIC){
                                 formationFromExcel.setDureePerHour((double) cell.getNumericCellValue());
                             }else {
-                                formationFromExcel.setDureePerHour(0.0);
+                                if (cell.getCellType()!=CellType.BLANK){
+                                    String[] formlT= cell.getCellFormula().split("/");
+                                    double dph= (double) Integer.parseInt(formlT[0]) /Integer.parseInt(formlT[1]);
+                                    formationFromExcel.setDureePerHour(dph);
+                                }
+
                             }
                         }
                         case 8-> {
