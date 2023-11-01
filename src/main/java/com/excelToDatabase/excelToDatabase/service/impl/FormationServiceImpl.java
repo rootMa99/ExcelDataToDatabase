@@ -41,34 +41,46 @@ public class FormationServiceImpl implements FormationService {
                      findAllFormationByCategorieFormationAndTypeAndDateDebutBetweenAndPersonelDetailsCategorie
                             (categorie, type, startDate,endDate,fonction);
         }
-        if (fonction==null){
+        if (fonction==null && type!=null && categorie!=null ){
             formationList= formationRepo.findAllByCategorieFormationAndTypeAndDateDebutBetween
                     (categorie, type, startDate, endDate);
+            System.out.println("this runing1");
+
         }
-        if (categorie==null){
+        if (categorie==null && type!=null && fonction!=null){
             formationList= formationRepo.findAllByTypeAndDateDebutBetweenAndPersonelDetailsCategorie
                     (type, startDate, endDate, fonction);
+            System.out.println("this runing2");
+
         }
-        if (type==null){
+        if (type==null && categorie!=null && fonction!=null){
             formationList= formationRepo.findAllByCategorieFormationAndDateDebutBetweenAndPersonelDetailsCategorie
                     (categorie, startDate, endDate, fonction);
+            System.out.println("this runing3");
+
         }
         if (type==null && fonction==null && categorie==null){
             formationList= formationRepo.findAllFormationByDateDebutBetween
                     (startDate, endDate);
+            System.out.println(formationList.size()+""+formationList.get(0).getFormationId());
         }
-        if (type==null && fonction==null){
+        if (type==null && fonction==null && categorie!=null){
             formationList= formationRepo.findAllByCategorieFormationAndDateDebutBetween(categorie, startDate, endDate);
+            System.out.println("this runing4");
         }
-        if (type== null && categorie==null){
+        if (type== null && categorie==null && fonction!=null){
             formationList= formationRepo.findAllByDateDebutBetweenAndPersonelDetailsCategorie(startDate, endDate, fonction);
+            System.out.println("this runing5");
+
         }
-        if (categorie==null && fonction==null){
+        if (categorie==null && fonction==null && type!=null){
             formationList= formationRepo.findAllByTypeAndDateDebutBetween(type, startDate, endDate);
+            System.out.println("this runing6");
+
         }
 
         List<FormationDto> fdto= new ArrayList<>();
-
+        System.out.println(formationList.size());
         for (Formation f: formationList){
             FormationDto formationDto= mp.map(f, FormationDto.class);
             fdto.add(formationDto);
