@@ -3,6 +3,7 @@ package com.excelToDatabase.excelToDatabase.service;
 import com.excelToDatabase.excelToDatabase.model.FormationDto;
 import com.excelToDatabase.excelToDatabase.model.FormationFromExcel;
 import com.excelToDatabase.excelToDatabase.model.FormationRest;
+import com.excelToDatabase.excelToDatabase.model.SelectHelper;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
@@ -21,5 +22,6 @@ public interface FormationService {
                                                                   Date startDate, Date endDate);
     List<FormationDto> getFormationByCategorieAndTypeAndDateRangeAndFonction(String categorie, String type,
                                                                   Date startDate, Date endDate, String fonction);
+    SelectHelper getAllTypeExist();
     void deleteFormation(String formationId);
 }

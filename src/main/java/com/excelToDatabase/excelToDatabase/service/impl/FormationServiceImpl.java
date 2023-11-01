@@ -3,9 +3,7 @@ package com.excelToDatabase.excelToDatabase.service.impl;
 import com.excelToDatabase.excelToDatabase.domain.Formation;
 import com.excelToDatabase.excelToDatabase.domain.Personel;
 import com.excelToDatabase.excelToDatabase.exception.FileStorageException;
-import com.excelToDatabase.excelToDatabase.model.FormationDto;
-import com.excelToDatabase.excelToDatabase.model.FormationFromExcel;
-import com.excelToDatabase.excelToDatabase.model.FormationRest;
+import com.excelToDatabase.excelToDatabase.model.*;
 import com.excelToDatabase.excelToDatabase.repository.FormationRepo;
 import com.excelToDatabase.excelToDatabase.repository.PersonelRepo;
 import com.excelToDatabase.excelToDatabase.service.FormationService;
@@ -20,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -233,5 +228,42 @@ public class FormationServiceImpl implements FormationService {
         }catch (Exception e){
             throw new RuntimeException("Could Not Delete This record Something Went Wrong");
         }
+    }
+
+    @Override
+    public SelectHelper getAllTypeExist() {
+        List<Formation> formationList=formationRepo.findAll();
+        SelectHelper selectHelper=new SelectHelper();
+        List<String> typeEx=new ArrayList<>();
+        List<String> cat= new ArrayList<>();
+        List<String> fonction= new ArrayList<>();
+
+        for (Formation f: formationList){
+            if (typeEx.isEmpty()|| cat.isEmpty()||fonction.isEmpty()){
+                typeEx.add(f.getType());
+                cat.add(f.getCategorieFormation());
+                fonction.add(f.getPersonelDetails().getCategorie());
+
+                continue;
+            }
+            if (!cat.contains(f.getCategorieFormation())){
+                cat.add(f.getCategorieFormation());
+            }
+            if (!typeEx.contains(f.getType())){
+                typeEx.add(f.getType());
+            }
+            if (!fonction.contains(f.getPersonelDetails().getCategorie())){
+                fonction.add(f.getPersonelDetails().getCategorie());
+            }
+        }
+        Collections.sort(typeEx);
+        Collections.sort(cat);
+        Collections.sort(fonction);
+
+
+        selectHelper.setTypeEx(typeEx);
+        selectHelper.setCat(cat);
+        selectHelper.setFonction(fonction);
+        return selectHelper;
     }
 }

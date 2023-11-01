@@ -24,6 +24,10 @@ public class FormationController {
 
     private FormationService formationService;
 
+    @GetMapping(path = "/allType")
+    public SelectHelper getAllType(){
+        return formationService.getAllTypeExist();
+    }
 
 
     @GetMapping(path = "/formations/type/categorie/{fonction}")
