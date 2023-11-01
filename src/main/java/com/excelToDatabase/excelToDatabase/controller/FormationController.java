@@ -30,13 +30,13 @@ public class FormationController {
     }
 
 
-    @GetMapping(path = "/formations/type/categorie/{fonction}")
-    public CollectionModel<FormationPersonelRest> getFormationByCatTypeRangeFonc(@PathVariable String fonction,
+    @GetMapping(path = "/formations/type/categorie/percat")
+    public CollectionModel<FormationPersonelRest> getFormationByCatTypeRangeFonc(
                                                                       @RequestBody FormationDateRange fdr){
         ModelMapper mp=new ModelMapper();
         mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         List<FormationDto> fdto= formationService.getFormationByCategorieAndTypeAndDateRangeAndFonction
-                (fdr.getCategorieFormation(), fdr.getType(), fdr.getStartDate(), fdr.getEndDate(), fonction);
+                (fdr.getCategorieFormation(), fdr.getType(), fdr.getStartDate(), fdr.getEndDate(), fdr.getCategoriePersonel());
         List<FormationPersonelRest> fpr=new ArrayList<>();
 
         for (FormationDto f:fdto){
@@ -47,7 +47,7 @@ public class FormationController {
             fpr.add(formationPersonelRest);
         }
         Link selfLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FormationController.class)
-                .getFormationByCatTypeRangeFonc(fonction, fdr)).withSelfRel();
+                .getFormationByCatTypeRangeFonc(fdr)).withSelfRel();
         Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
                 .getPersonelData()).withRel("personels");
 

@@ -6,14 +6,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Map;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
 public class SelectHelper {
 
-    private List<String> typeEx;
-    private List<String>cat;
+    private Map<String, List<String>> catList;
     private List<String> fonction;
+    private List<String> departement;
 
 }

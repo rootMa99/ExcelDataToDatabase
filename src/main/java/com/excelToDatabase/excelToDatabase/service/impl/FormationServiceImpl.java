@@ -35,9 +35,38 @@ public class FormationServiceImpl implements FormationService {
 
         ModelMapper mp=new ModelMapper();
         mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        List<Formation> formationList= formationRepo.
-                findAllByCategorieFormationAndTypeAndDateDebutBetweenAndPersonelDetailsFonctionEntreprise
-                        (categorie, type, startDate,endDate,fonction);
+        List<Formation> formationList= new ArrayList<>();
+        if (categorie!=null && type!=null && startDate!=null && endDate!=null && fonction!=null){
+             formationList= formationRepo.
+                     findAllFormationByCategorieFormationAndTypeAndDateDebutBetweenAndPersonelDetailsCategorie
+                            (categorie, type, startDate,endDate,fonction);
+        }
+        if (fonction==null){
+            formationList= formationRepo.findAllByCategorieFormationAndTypeAndDateDebutBetween
+                    (categorie, type, startDate, endDate);
+        }
+        if (categorie==null){
+            formationList= formationRepo.findAllByTypeAndDateDebutBetweenAndPersonelDetailsCategorie
+                    (type, startDate, endDate, fonction);
+        }
+        if (type==null){
+            formationList= formationRepo.findAllByCategorieFormationAndDateDebutBetweenAndPersonelDetailsCategorie
+                    (categorie, startDate, endDate, fonction);
+        }
+        if (type==null && fonction==null && categorie==null){
+            formationList= formationRepo.findAllFormationByDateDebutBetween
+                    (startDate, endDate);
+        }
+        if (type==null && fonction==null){
+            formationList= formationRepo.findAllByCategorieFormationAndDateDebutBetween(categorie, startDate, endDate);
+        }
+        if (type== null && categorie==null){
+            formationList= formationRepo.findAllByDateDebutBetweenAndPersonelDetailsCategorie(startDate, endDate, fonction);
+        }
+        if (categorie==null && fonction==null){
+            formationList= formationRepo.findAllByTypeAndDateDebutBetween(type, startDate, endDate);
+        }
+
         List<FormationDto> fdto= new ArrayList<>();
 
         for (Formation f: formationList){
@@ -234,36 +263,50 @@ public class FormationServiceImpl implements FormationService {
     public SelectHelper getAllTypeExist() {
         List<Formation> formationList=formationRepo.findAll();
         SelectHelper selectHelper=new SelectHelper();
-        List<String> typeEx=new ArrayList<>();
-        List<String> cat= new ArrayList<>();
+        ;
         List<String> fonction= new ArrayList<>();
+        List<String> departement= new ArrayList<>();
+        Map<String, List<String>> catList = new HashMap<>();
+
 
         for (Formation f: formationList){
-            if (typeEx.isEmpty()|| cat.isEmpty()||fonction.isEmpty()){
-                typeEx.add(f.getType());
-                cat.add(f.getCategorieFormation());
+            if (fonction.isEmpty()||departement.isEmpty()||catList.isEmpty()){
                 fonction.add(f.getPersonelDetails().getCategorie());
+                departement.add(f.getPersonelDetails().getDepartement());
+                List<String>typo= new ArrayList<>();
+                typo.add(f.getType());
+                catList.put(f.getCategorieFormation(),typo);
 
                 continue;
             }
-            if (!cat.contains(f.getCategorieFormation())){
-                cat.add(f.getCategorieFormation());
+            if (catList.containsKey(f.getCategorieFormation())){
+                if (!catList.get(f.getCategorieFormation()).contains(f.getType())){
+                    catList.get(f.getCategorieFormation()).add(f.getType());
+                }
+                Collections.sort(catList.get(f.getCategorieFormation()));
+            }else {
+                List<String>typo= new ArrayList<>();
+                typo.add(f.getType());
+                catList.put(f.getCategorieFormation(),typo);
             }
-            if (!typeEx.contains(f.getType())){
-                typeEx.add(f.getType());
-            }
+
+
             if (!fonction.contains(f.getPersonelDetails().getCategorie())){
                 fonction.add(f.getPersonelDetails().getCategorie());
             }
+            if (!departement.contains(f.getPersonelDetails().getDepartement())){
+                departement.add(f.getPersonelDetails().getDepartement());
+            }
         }
-        Collections.sort(typeEx);
-        Collections.sort(cat);
+
+
         Collections.sort(fonction);
+        Collections.sort(departement);
 
 
-        selectHelper.setTypeEx(typeEx);
-        selectHelper.setCat(cat);
         selectHelper.setFonction(fonction);
+        selectHelper.setDepartement(departement);
+        selectHelper.setCatList(catList);
         return selectHelper;
     }
 }

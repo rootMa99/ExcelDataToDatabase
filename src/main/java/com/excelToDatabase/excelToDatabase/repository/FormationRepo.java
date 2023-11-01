@@ -18,7 +18,11 @@ public interface FormationRepo extends JpaRepository<Formation, Long> {
     List<Formation> findAllByTypeAndDateDebutBetween(String type, Date startDate, Date endDate);
     List<Formation> findAllByCategorieFormationAndDateDebutBetween(String categorie, Date startDate, Date endDate);
 
-    List<Formation> findAllByCategorieFormationAndTypeAndDateDebutBetweenAndPersonelDetailsFonctionEntreprise
+    List<Formation> findAllFormationByCategorieFormationAndTypeAndDateDebutBetweenAndPersonelDetailsCategorie
             (String categorie, String type, Date startDate, Date endDate, String fonction);
-
+    List<Formation> findAllByTypeAndDateDebutBetweenAndPersonelDetailsCategorie
+            (String type, Date startDate, Date endDate, String fonction);
+    List<Formation> findAllByCategorieFormationAndDateDebutBetweenAndPersonelDetailsCategorie
+            (String categorie, Date startDate, Date endDate, String fonction);
+    List<Formation> findAllByDateDebutBetweenAndPersonelDetailsCategorie(Date startDate, Date endDate, String fonction);
 }
