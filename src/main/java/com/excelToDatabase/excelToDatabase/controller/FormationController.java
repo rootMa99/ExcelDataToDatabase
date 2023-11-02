@@ -30,6 +30,23 @@ public class FormationController {
     }
 
 
+    @GetMapping(path="/formations/Dashboard")
+    public List<FormationPersonelRest> getDashboardData(@RequestBody FormationDateRange fdr){
+        ModelMapper mp= new ModelMapper();
+        mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        List<FormationDto> formationDtos= formationService.getDashboardData(fdr.getCategorieFormation(),
+                fdr.getType(), fdr.getStartDate(), fdr.getEndDate(), fdr.getCategoriePersonel(),
+                fdr.getDepartmentPersonel());
+        List<FormationPersonelRest>fprs= new ArrayList<>();
+        for (FormationDto f: formationDtos){
+            FormationPersonelRest fpr=mp.map(f, FormationPersonelRest.class);
+            fpr.setPersonelDetails(mp.map(f.getPersonelDetails(), PersonelFormationRest.class));
+            fprs.add(fpr);
+        }
+
+        return fprs;
+    }
+
     @GetMapping(path = "/formations/type/categorie/percat")
     public CollectionModel<FormationPersonelRest> getFormationByCatTypeRangeFonc(
                                                                       @RequestBody FormationDateRange fdr){

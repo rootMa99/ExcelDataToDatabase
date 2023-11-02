@@ -1,6 +1,5 @@
 package com.excelToDatabase.excelToDatabase.model;
 
-import com.excelToDatabase.excelToDatabase.domain.Personel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +20,7 @@ public class FormationRequest {
     private Date dateDebut;
     private Date dateFin;
     private int month;
-    private String presentataire;
+    private String prestataire;
     private String formatteur;
     private boolean evaluationAFrois;
     private String bilan;

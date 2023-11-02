@@ -24,7 +24,7 @@ public class FormationDto {
     private Date dateDebut;
     private Date dateFin;
     private int month;
-    private String presentataire;
+    private String prestataire;
     private String formatteur;
     private boolean evaluationAFrois;
     private String bilan;

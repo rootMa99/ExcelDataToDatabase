@@ -1,6 +1,5 @@
 package com.excelToDatabase.excelToDatabase.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,7 +36,7 @@ public class Formation {
     @Column(name="month", nullable = false)
     private Integer month;
     @Column(name = "presentataire", nullable = false)
-    private String presentataire;
+    private String prestataire;
     @Column(name = "formatteur", nullable = false)
     private String formatteur;
     @Column(name = "evaluation-a-frois", nullable = false)

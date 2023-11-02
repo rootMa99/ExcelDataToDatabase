@@ -30,6 +30,85 @@ public class FormationServiceImpl implements FormationService {
 
 
     @Override
+    public List<FormationDto> getDashboardData(String categorieFormation, String type, Date startDate, Date endDate,
+                                               String personelCategorie, String personelDepartement) {
+        ModelMapper mp= new ModelMapper();
+        mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        List<Formation> formationList= new ArrayList<>();
+        List<FormationDto> formationDtos= new ArrayList<>();
+        if (categorieFormation!=null && type!=null && personelCategorie!=null && personelDepartement!=null){
+            formationList= formationRepo.findAllByCategorieFormationAndTypeAndDateDebutBetweenAndPersonelDetailsCategorieAndPersonelDetailsDepartement
+                    (categorieFormation, type, startDate,endDate, personelCategorie, personelDepartement);
+        }
+        if (categorieFormation == null && type==null && personelCategorie==null && personelDepartement==null){
+            formationList= formationRepo.findAllFormationByDateDebutBetween(startDate, endDate);
+        }
+        if(categorieFormation!=null && type!=null && personelCategorie!=null && personelDepartement==null){
+            formationList= formationRepo.findAllFormationByCategorieFormationAndTypeAndDateDebutBetweenAndPersonelDetailsCategorie
+                    (categorieFormation, type, startDate, endDate, personelCategorie);
+        }
+        if (categorieFormation!=null && type!=null && personelCategorie==null && personelDepartement==null){
+            formationList= formationRepo.findAllByCategorieFormationAndTypeAndDateDebutBetween
+                    (categorieFormation, type, startDate, endDate);
+        }
+        if (categorieFormation!=null && type==null && personelCategorie==null && personelDepartement==null){
+            formationList= formationRepo.findAllByCategorieFormationAndDateDebutBetween
+                    (categorieFormation, startDate, endDate);
+        }
+        if (categorieFormation==null && type!=null && personelCategorie==null && personelDepartement==null){
+            formationList= formationRepo.findAllByTypeAndDateDebutBetween(type, startDate, endDate);
+        }
+        if (categorieFormation==null && type==null && personelCategorie!=null && personelDepartement==null){
+            formationList= formationRepo.findAllByDateDebutBetweenAndPersonelDetailsCategorie
+                    (startDate, endDate, personelCategorie);
+        }
+        if (categorieFormation==null && type==null && personelCategorie==null && personelDepartement!=null){
+            formationList= formationRepo.findAllByDateDebutBetweenAndPersonelDetailsDepartement
+                    (startDate, endDate, personelDepartement);
+        }
+
+        if (categorieFormation!=null && type==null && personelCategorie!=null && personelDepartement==null){
+            formationList= formationRepo.findAllByCategorieFormationAndDateDebutBetweenAndPersonelDetailsCategorie
+                    (categorieFormation, startDate, endDate, personelCategorie);
+        }
+        if (categorieFormation!=null && type==null && personelCategorie==null && personelDepartement!=null){
+            formationList= formationRepo.findAllByCategorieFormationAndDateDebutBetweenAndPersonelDetailsDepartement
+                    (categorieFormation, startDate, endDate, personelDepartement);
+        }
+        if (categorieFormation==null && type!=null && personelCategorie!=null && personelDepartement==null){
+            formationList= formationRepo.findAllByTypeAndDateDebutBetweenAndPersonelDetailsCategorie
+                    (type, startDate, endDate, personelCategorie);
+        }
+        if (categorieFormation==null && type!=null && personelCategorie==null && personelDepartement!=null){
+            formationList= formationRepo.findAllByTypeAndDateDebutBetweenAndPersonelDetailsDepartement
+                    (type, startDate, endDate, personelDepartement);
+        }
+        if (categorieFormation==null && type==null && personelCategorie!=null && personelDepartement!=null){
+            formationList= formationRepo.findAllByDateDebutBetweenAndPersonelDetailsCategorieAndPersonelDetailsDepartement
+                    (startDate, endDate, personelCategorie, personelDepartement);
+        }
+        if (categorieFormation==null && type!=null && personelCategorie!=null && personelDepartement!=null){
+            formationList= formationRepo.findAllByTypeAndDateDebutBetweenAndPersonelDetailsCategorieAndPersonelDetailsDepartement
+                    (type, startDate, endDate, personelCategorie, personelDepartement);
+        }
+        if (categorieFormation!=null && type==null && personelCategorie!=null && personelDepartement!=null){
+            formationList= formationRepo.findAllByCategorieFormationAndDateDebutBetweenAndPersonelDetailsCategorieAndPersonelDetailsDepartement
+                    (categorieFormation, startDate, endDate, personelCategorie, personelDepartement);
+        }
+        if (categorieFormation!=null && type!=null && personelCategorie==null && personelDepartement!=null){
+            formationList= formationRepo.findAllByCategorieFormationAndTypeAndDateDebutBetweenAndPersonelDetailsDepartement
+                    (categorieFormation, type, startDate, endDate, personelDepartement);
+        }
+
+        for (Formation f: formationList){
+            FormationDto fdto=mp.map(f, FormationDto.class);
+            formationDtos.add(fdto);
+        }
+
+        return formationDtos;
+    }
+
+    @Override
     public List<FormationDto> getFormationByCategorieAndTypeAndDateRangeAndFonction
             (String categorie, String type, Date startDate, Date endDate, String fonction) {
 
@@ -233,8 +312,8 @@ public class FormationServiceImpl implements FormationService {
         if (formationDto.getDateFin()!=null){
             formation.setDateFin(formationDto.getDateFin());
         }
-        if (formationDto.getPresentataire()!=null){
-            formation.setPresentataire(formationDto.getPresentataire());
+        if (formationDto.getPrestataire()!=null){
+            formation.setPrestataire(formationDto.getPrestataire());
         }
         if (formationDto.getFormatteur()!=null){
             formation.setFormatteur(formationDto.getFormatteur());
@@ -269,7 +348,6 @@ public class FormationServiceImpl implements FormationService {
     public SelectHelper getAllTypeExist() {
         List<Formation> formationList=formationRepo.findAll();
         SelectHelper selectHelper=new SelectHelper();
-        ;
         List<String> fonction= new ArrayList<>();
         List<String> departement= new ArrayList<>();
         Map<String, List<String>> catList = new HashMap<>();

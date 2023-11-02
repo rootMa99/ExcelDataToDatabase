@@ -17,4 +17,5 @@ public class FormationDateRange {
     private String type;
     private String categorieFormation;
     private String categoriePersonel;
+    private String departmentPersonel;
 }

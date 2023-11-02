@@ -11,7 +11,7 @@ import java.util.List;
 public interface FormationRepo extends JpaRepository<Formation, Long> {
     Formation findByFormationId(String formationId);
 
-    Formation save(Formation formation);
+
     List<Formation> findAllFormationByDateDebutBetween(Date startDate, Date endDate);
     List<Formation> findAllByType(String type);
     List<Formation> findAllByCategorieFormation(String categorie);
@@ -26,4 +26,24 @@ public interface FormationRepo extends JpaRepository<Formation, Long> {
     List<Formation> findAllByCategorieFormationAndDateDebutBetweenAndPersonelDetailsCategorie
             (String categorie, Date startDate, Date endDate, String fonction);
     List<Formation> findAllByDateDebutBetweenAndPersonelDetailsCategorie(Date startDate, Date endDate, String fonction);
+
+    List<Formation> findAllByCategorieFormationAndTypeAndDateDebutBetweenAndPersonelDetailsCategorieAndPersonelDetailsDepartement
+            (String categorieFormation, String type, Date startDate, Date endDate, String personelCategorie, String personelDepartement);
+
+    List<Formation> findAllByDateDebutBetweenAndPersonelDetailsDepartement(Date startdate, Date endDate, String personelDepartement);
+
+    List <Formation> findAllByCategorieFormationAndDateDebutBetweenAndPersonelDetailsDepartement
+            (String categorie, Date startDate, Date endDate, String personelDepartement);
+    List<Formation> findAllByTypeAndDateDebutBetweenAndPersonelDetailsDepartement
+            (String type, Date startDate, Date endDate, String personelDepartement);
+    List<Formation> findAllByDateDebutBetweenAndPersonelDetailsCategorieAndPersonelDetailsDepartement
+            (Date startDate, Date endDate, String personelCategorie, String personelDepartement);
+    List<Formation> findAllByTypeAndDateDebutBetweenAndPersonelDetailsCategorieAndPersonelDetailsDepartement
+            (String type, Date startDate, Date endDate, String personelCategorie, String personelDepartement);
+    List<Formation> findAllByCategorieFormationAndDateDebutBetweenAndPersonelDetailsCategorieAndPersonelDetailsDepartement
+            (String categorieFormation, Date startDate, Date endDate, String personelCategorie, String personelDepartement);
+
+    List<Formation> findAllByCategorieFormationAndTypeAndDateDebutBetweenAndPersonelDetailsDepartement
+            (String categorie, String type, Date startDate, Date endDate, String personelDeprtement);
+
 }

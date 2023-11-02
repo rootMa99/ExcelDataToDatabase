@@ -1,18 +1,15 @@
 package com.excelToDatabase.excelToDatabase.service;
 
-import com.excelToDatabase.excelToDatabase.model.FormationDto;
 import com.excelToDatabase.excelToDatabase.model.FormationFromExcel;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.joda.time.Months;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -76,7 +73,7 @@ public class UploadFormationExcel {
                                 }
                             }
                         }
-                        case 11->formationFromExcel.setPresentataire(cell.getStringCellValue());
+                        case 11->formationFromExcel.setPrestataire(cell.getStringCellValue());
                         case 12->formationFromExcel.setFormatteur(cell.getStringCellValue());
                         case 13 -> {
                             if (cell.getCellType() == CellType.BOOLEAN) {

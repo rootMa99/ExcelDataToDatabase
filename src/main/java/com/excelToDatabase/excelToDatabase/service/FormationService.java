@@ -22,6 +22,9 @@ public interface FormationService {
                                                                   Date startDate, Date endDate);
     List<FormationDto> getFormationByCategorieAndTypeAndDateRangeAndFonction(String categorie, String type,
                                                                   Date startDate, Date endDate, String fonction);
+
+    List<FormationDto> getDashboardData(String categorieFormation, String type, Date StartDate, Date endDate,
+                                        String personelcategorie, String personelDepartement);
     SelectHelper getAllTypeExist();
     void deleteFormation(String formationId);
 }
