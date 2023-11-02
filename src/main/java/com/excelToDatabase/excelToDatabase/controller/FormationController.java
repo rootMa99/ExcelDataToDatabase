@@ -31,7 +31,7 @@ public class FormationController {
 
 
     @GetMapping(path="/formations/Dashboard")
-    public List<FormationPersonelRest> getDashboardData(@RequestBody FormationDateRange fdr){
+    public CollectionModel<FormationPersonelRest> getDashboardData(@RequestBody FormationDateRange fdr){
         ModelMapper mp= new ModelMapper();
         mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         List<FormationDto> formationDtos= formationService.getDashboardData(fdr.getCategorieFormation(),
@@ -41,10 +41,15 @@ public class FormationController {
         for (FormationDto f: formationDtos){
             FormationPersonelRest fpr=mp.map(f, FormationPersonelRest.class);
             fpr.setPersonelDetails(mp.map(f.getPersonelDetails(), PersonelFormationRest.class));
+            Link selfLink = Link.of("/personel/personel/"+fpr.getPersonelDetails().getMatricule());
+            fpr.getPersonelDetails().add(selfLink);
             fprs.add(fpr);
         }
-
-        return fprs;
+        Link selfLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FormationController.class)
+                .getDashboardData(fdr)).withSelfRel();
+        Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
+                .getPersonelData()).withRel("personels");
+        return CollectionModel.of(fprs, selfLink, personelsLink);
     }
 
     @GetMapping(path = "/formations/type/categorie/percat")
@@ -67,7 +72,7 @@ public class FormationController {
                 .getFormationByCatTypeRangeFonc(fdr)).withSelfRel();
         Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
                 .getPersonelData()).withRel("personels");
-        return CollectionModel.of(fpr);
+        return CollectionModel.of(fpr, selfLink, personelsLink);
     }
 
     @GetMapping(path = "/formations/type/categorie")

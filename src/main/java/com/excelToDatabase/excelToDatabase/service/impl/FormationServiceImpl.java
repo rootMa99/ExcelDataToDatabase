@@ -29,6 +29,45 @@ public class FormationServiceImpl implements FormationService {
     private FormationRepo formationRepo;
 
 
+    public List<Formation> getMinimize(String categorie, String type, Date startDate, Date endDate,
+                                       String fonction){
+        List<Formation> formationList=new ArrayList<>();
+
+        if (categorie!=null && type!=null && fonction!=null){
+            formationList= formationRepo.
+                    findAllFormationByCategorieFormationAndTypeAndDateDebutBetweenAndPersonelDetailsCategorie
+                            (categorie, type, startDate,endDate,fonction);
+        }
+        if (fonction==null && type!=null && categorie!=null ){
+            formationList= formationRepo.findAllByCategorieFormationAndTypeAndDateDebutBetween
+                    (categorie, type, startDate, endDate);
+        }
+        if (categorie==null && type!=null && fonction!=null){
+            formationList= formationRepo.findAllByTypeAndDateDebutBetweenAndPersonelDetailsCategorie
+                    (type, startDate, endDate, fonction);
+        }
+        if (type==null && categorie!=null && fonction!=null){
+            formationList= formationRepo.findAllByCategorieFormationAndDateDebutBetweenAndPersonelDetailsCategorie
+                    (categorie, startDate, endDate, fonction);
+        }
+        if (type==null && fonction==null && categorie==null){
+            formationList= formationRepo.findAllFormationByDateDebutBetween
+                    (startDate, endDate);
+        }
+        if (type==null && fonction==null && categorie!=null){
+            formationList= formationRepo.findAllByCategorieFormationAndDateDebutBetween(categorie, startDate, endDate);
+        }
+        if (type== null && categorie==null && fonction!=null){
+            formationList= formationRepo.findAllByDateDebutBetweenAndPersonelDetailsCategorie(startDate, endDate, fonction);
+        }
+        if (categorie==null && fonction==null && type!=null){
+            formationList= formationRepo.findAllByTypeAndDateDebutBetween(type, startDate, endDate);
+        }
+
+
+        return formationList;
+    }
+
     @Override
     public List<FormationDto> getDashboardData(String categorieFormation, String type, Date startDate, Date endDate,
                                                String personelCategorie, String personelDepartement) {
@@ -36,48 +75,24 @@ public class FormationServiceImpl implements FormationService {
         mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         List<Formation> formationList= new ArrayList<>();
         List<FormationDto> formationDtos= new ArrayList<>();
+
+        if (personelDepartement==null){
+            formationList=getMinimize(categorieFormation,type , startDate, endDate, personelCategorie);
+        }
+
         if (categorieFormation!=null && type!=null && personelCategorie!=null && personelDepartement!=null){
             formationList= formationRepo.findAllByCategorieFormationAndTypeAndDateDebutBetweenAndPersonelDetailsCategorieAndPersonelDetailsDepartement
                     (categorieFormation, type, startDate,endDate, personelCategorie, personelDepartement);
         }
-        if (categorieFormation == null && type==null && personelCategorie==null && personelDepartement==null){
-            formationList= formationRepo.findAllFormationByDateDebutBetween(startDate, endDate);
-        }
-        if(categorieFormation!=null && type!=null && personelCategorie!=null && personelDepartement==null){
-            formationList= formationRepo.findAllFormationByCategorieFormationAndTypeAndDateDebutBetweenAndPersonelDetailsCategorie
-                    (categorieFormation, type, startDate, endDate, personelCategorie);
-        }
-        if (categorieFormation!=null && type!=null && personelCategorie==null && personelDepartement==null){
-            formationList= formationRepo.findAllByCategorieFormationAndTypeAndDateDebutBetween
-                    (categorieFormation, type, startDate, endDate);
-        }
-        if (categorieFormation!=null && type==null && personelCategorie==null && personelDepartement==null){
-            formationList= formationRepo.findAllByCategorieFormationAndDateDebutBetween
-                    (categorieFormation, startDate, endDate);
-        }
-        if (categorieFormation==null && type!=null && personelCategorie==null && personelDepartement==null){
-            formationList= formationRepo.findAllByTypeAndDateDebutBetween(type, startDate, endDate);
-        }
-        if (categorieFormation==null && type==null && personelCategorie!=null && personelDepartement==null){
-            formationList= formationRepo.findAllByDateDebutBetweenAndPersonelDetailsCategorie
-                    (startDate, endDate, personelCategorie);
-        }
+
         if (categorieFormation==null && type==null && personelCategorie==null && personelDepartement!=null){
             formationList= formationRepo.findAllByDateDebutBetweenAndPersonelDetailsDepartement
                     (startDate, endDate, personelDepartement);
         }
 
-        if (categorieFormation!=null && type==null && personelCategorie!=null && personelDepartement==null){
-            formationList= formationRepo.findAllByCategorieFormationAndDateDebutBetweenAndPersonelDetailsCategorie
-                    (categorieFormation, startDate, endDate, personelCategorie);
-        }
         if (categorieFormation!=null && type==null && personelCategorie==null && personelDepartement!=null){
             formationList= formationRepo.findAllByCategorieFormationAndDateDebutBetweenAndPersonelDetailsDepartement
                     (categorieFormation, startDate, endDate, personelDepartement);
-        }
-        if (categorieFormation==null && type!=null && personelCategorie!=null && personelDepartement==null){
-            formationList= formationRepo.findAllByTypeAndDateDebutBetweenAndPersonelDetailsCategorie
-                    (type, startDate, endDate, personelCategorie);
         }
         if (categorieFormation==null && type!=null && personelCategorie==null && personelDepartement!=null){
             formationList= formationRepo.findAllByTypeAndDateDebutBetweenAndPersonelDetailsDepartement
@@ -108,49 +123,14 @@ public class FormationServiceImpl implements FormationService {
         return formationDtos;
     }
 
+
     @Override
     public List<FormationDto> getFormationByCategorieAndTypeAndDateRangeAndFonction
             (String categorie, String type, Date startDate, Date endDate, String fonction) {
 
         ModelMapper mp=new ModelMapper();
         mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        List<Formation> formationList= new ArrayList<>();
-        if (categorie!=null && type!=null && startDate!=null && endDate!=null && fonction!=null){
-             formationList= formationRepo.
-                     findAllFormationByCategorieFormationAndTypeAndDateDebutBetweenAndPersonelDetailsCategorie
-                            (categorie, type, startDate,endDate,fonction);
-        }
-        if (fonction==null && type!=null && categorie!=null ){
-            formationList= formationRepo.findAllByCategorieFormationAndTypeAndDateDebutBetween
-                    (categorie, type, startDate, endDate);
-
-        }
-        if (categorie==null && type!=null && fonction!=null){
-            formationList= formationRepo.findAllByTypeAndDateDebutBetweenAndPersonelDetailsCategorie
-                    (type, startDate, endDate, fonction);
-
-        }
-        if (type==null && categorie!=null && fonction!=null){
-            formationList= formationRepo.findAllByCategorieFormationAndDateDebutBetweenAndPersonelDetailsCategorie
-                    (categorie, startDate, endDate, fonction);
-
-        }
-        if (type==null && fonction==null && categorie==null){
-            formationList= formationRepo.findAllFormationByDateDebutBetween
-                    (startDate, endDate);
-        }
-        if (type==null && fonction==null && categorie!=null){
-            formationList= formationRepo.findAllByCategorieFormationAndDateDebutBetween(categorie, startDate, endDate);
-        }
-        if (type== null && categorie==null && fonction!=null){
-            formationList= formationRepo.findAllByDateDebutBetweenAndPersonelDetailsCategorie(startDate, endDate, fonction);
-
-        }
-        if (categorie==null && fonction==null && type!=null){
-            formationList= formationRepo.findAllByTypeAndDateDebutBetween(type, startDate, endDate);
-
-        }
-
+        List<Formation> formationList=getMinimize(categorie, type, startDate, endDate, fonction);
         List<FormationDto> fdto= new ArrayList<>();
         for (Formation f: formationList){
             FormationDto formationDto= mp.map(f, FormationDto.class);
