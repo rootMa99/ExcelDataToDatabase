@@ -368,7 +368,7 @@ public class FormationServiceImpl implements FormationService {
         Collections.sort(departement);
 
 
-        selectHelper.setFonction(fonction);
+        selectHelper.setCategoriePersonel(fonction);
         selectHelper.setDepartement(departement);
         selectHelper.setCatList(catList);
         return selectHelper;

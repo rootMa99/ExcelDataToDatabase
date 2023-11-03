@@ -15,7 +15,7 @@ import java.util.Map;
 public class SelectHelper {
 
     private Map<String, List<String>> catList;
-    private List<String> fonction;
+    private List<String> categoriePersonel;
     private List<String> departement;
 
 }

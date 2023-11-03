@@ -64,8 +64,7 @@ public class UploadFormationExcel {
                             if (cell.getCellType()==CellType.NUMERIC){
                                 formationFromExcel.setMonth((int) cell.getNumericCellValue());
                             }else {
-                                if (formationFromExcel.getDateDebut()!=null
-                                        && formationFromExcel.getDateFin()!=null){
+                                if (formationFromExcel.getDateDebut()!=null){
                                     Calendar m_calendar=Calendar.getInstance();
                                     m_calendar.setTime(formationFromExcel.getDateDebut());
                                     int nMonth1=m_calendar.get(Calendar.MONTH);
