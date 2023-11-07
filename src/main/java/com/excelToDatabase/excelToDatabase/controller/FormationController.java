@@ -14,9 +14,12 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:3000/")
 @RestController
 @RequestMapping("/formation")
 @AllArgsConstructor
@@ -51,8 +54,34 @@ public class FormationController {
                 .getPersonelData()).withRel("personels");
         return CollectionModel.of(fprs, selfLink, personelsLink);
     }
+    @GetMapping(path = "/formations/{catFormation}/{type}/{startdate}/{enddate}/{catPer}")
+    public CollectionModel<FormationPersonelRest> getFormationByCatTypeRangeP(
+            @PathVariable String catFormation,@PathVariable String type,@PathVariable("startdate") String startdate
+            ,@PathVariable("enddate") String enddate, @PathVariable String catPer) throws ParseException {
+        ModelMapper mp=new ModelMapper();
+        mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date sdate = dateFormat.parse(startdate);
+        Date edate = dateFormat.parse(enddate);
 
-    @GetMapping(path = "/formations/type/categorie/percat")
+        List<FormationDto> fdto= formationService.getFormationByCategorieAndTypeAndDateRangeAndFonction
+                (catFormation,type, sdate, edate, catPer);
+        List<FormationPersonelRest> fpr=new ArrayList<>();
+
+        for (FormationDto f:fdto){
+            FormationPersonelRest formationPersonelRest= mp.map(f, FormationPersonelRest.class);
+            formationPersonelRest.setPersonelDetails(mp.map(f.getPersonelDetails(), PersonelFormationRest.class));
+            Link personDetailsSelfLink = Link.of("/personel/personel/" + formationPersonelRest.getPersonelDetails().getMatricule());
+            formationPersonelRest.getPersonelDetails().add(personDetailsSelfLink);
+            fpr.add(formationPersonelRest);
+        }
+        Link selfLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FormationController.class)
+                .getFormationByCatTypeRangeP(catFormation, type, startdate, enddate, catPer)).withSelfRel();
+        Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
+                .getPersonelData()).withRel("personels");
+        return CollectionModel.of(fpr, selfLink, personelsLink);
+    }
+    @PostMapping(path = "/formations/type/categorie/percat")
     public CollectionModel<FormationPersonelRest> getFormationByCatTypeRangeFonc(
                                                                       @RequestBody FormationDateRange fdr){
         ModelMapper mp=new ModelMapper();
