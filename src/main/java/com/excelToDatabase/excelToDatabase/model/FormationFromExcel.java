@@ -14,6 +14,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class FormationFromExcel {
     private long matricule;
+    private String categorie;
+    private String departement;
     private String formationId;
     private String type;
     private String categorieFormation;

@@ -14,11 +14,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+
+import static org.apache.poi.ss.usermodel.CellType.BLANK;
+
 @Service
 public class UploadFormationExcel {
 
     public static List<FormationFromExcel> getFormationDataFromExcel(InputStream inputStream){
         List<FormationFromExcel>formationFromExcels=new ArrayList<>();
+        boolean done=false;
         try {
             XSSFWorkbook workbook=new XSSFWorkbook(inputStream);
             XSSFSheet sheet=workbook.getSheet("Déploiement");
@@ -28,18 +32,27 @@ public class UploadFormationExcel {
                     rowIndex++;
                     continue;
                 }
+                if (done){
+                    break;
+                }
                 Iterator<Cell> cellIterator= row.iterator();
                 int cellIndex=0;
                 FormationFromExcel formationFromExcel=new FormationFromExcel();
-                while (cellIterator.hasNext()){
+                while (cellIterator.hasNext() && !done){
                     Cell cell= cellIterator.next();
                     switch (cellIndex){
+
                         case 0-> {
+                            System.out.println(cell.getCellType());
+                            if(cell.getCellType()==BLANK){
+                                done=true;
+                            }
                             if (cell.getCellType()==CellType.NUMERIC){
                                 formationFromExcel.setMatricule((long) cell.getNumericCellValue());
                             }else {
                                 formationFromExcel.setMatricule(0);
                             }
+
                         }
                         case 3->formationFromExcel.setType(cell.getStringCellValue());
                         case 5->formationFromExcel.setCategorieFormation(cell.getStringCellValue());
@@ -48,7 +61,7 @@ public class UploadFormationExcel {
                             if (cell.getCellType()==CellType.NUMERIC){
                                 formationFromExcel.setDureePerHour((double) cell.getNumericCellValue());
                             }else {
-                                if (cell.getCellType()!=CellType.BLANK){
+                                if (cell.getCellType()!= BLANK){
                                     String[] formlT= cell.getCellFormula().split("/");
                                     double dph= (double) Integer.parseInt(formlT[0]) /Integer.parseInt(formlT[1]);
                                     formationFromExcel.setDureePerHour(dph);

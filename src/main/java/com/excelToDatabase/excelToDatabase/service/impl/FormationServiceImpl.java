@@ -115,6 +115,8 @@ public class FormationServiceImpl implements FormationService {
                     (categorieFormation, type, startDate, endDate, personelDepartement);
         }
 
+
+
         for (Formation f: formationList){
             FormationDto fdto=mp.map(f, FormationDto.class);
             formationDtos.add(fdto);

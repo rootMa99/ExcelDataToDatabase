@@ -33,19 +33,17 @@ public class FormationController {
     }
 
 
-    @GetMapping(path="/formations/Dashboard")
-    public CollectionModel<FormationPersonelRest> getDashboardData(@RequestBody FormationDateRange fdr){
+    @PostMapping(path="/formations/Dashboard")
+    public CollectionModel<FormationDashboardRest> getDashboardData(@RequestBody FormationDateRange fdr){
         ModelMapper mp= new ModelMapper();
         mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        List<FormationDto> formationDtos= formationService.getDashboardData(fdr.getCategorieFormation(),
-                fdr.getType(), fdr.getStartDate(), fdr.getEndDate(), fdr.getCategoriePersonel(),
-                fdr.getDepartmentPersonel());
-        List<FormationPersonelRest>fprs= new ArrayList<>();
+        List<FormationDto> formationDtos= formationService.getFormationsInDateRange(fdr.getStartDate(), fdr.getEndDate());
+        List<FormationDashboardRest>fprs= new ArrayList<>();
         for (FormationDto f: formationDtos){
-            FormationPersonelRest fpr=mp.map(f, FormationPersonelRest.class);
-            fpr.setPersonelDetails(mp.map(f.getPersonelDetails(), PersonelFormationRest.class));
-            Link selfLink = Link.of("/personel/personel/"+fpr.getPersonelDetails().getMatricule());
-            fpr.getPersonelDetails().add(selfLink);
+            FormationDashboardRest fpr=mp.map(f, FormationDashboardRest.class);
+            fpr.setCategoriePersonel(f.getPersonelDetails().getCategorie());
+            fpr.setMatricule(f.getPersonelDetails().getMatricule());
+            fpr.setDepartmentPersonel(f.getPersonelDetails().getDepartement());
             fprs.add(fpr);
         }
         Link selfLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FormationController.class)

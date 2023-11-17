@@ -24,7 +24,14 @@ public class PersonelService {
         if (UploadExcelAndExtractData.isValidFormat(file)){
             try {
                 List<Personel> personels= UploadExcelAndExtractData.getPersonelDataFromExcel(file.getInputStream());
-                this.personelRepo.saveAll(personels);
+                List<Personel> personelList=new ArrayList<>();
+                for (Personel p:personels){
+                    Personel personel=this.personelRepo.findByMatricule(p.getMatricule());
+                    if (personel==null){
+                        personelList.add(p);
+                    }
+                }
+                this.personelRepo.saveAll(personelList);
             } catch (IOException e) {
                 throw new IllegalAccessException("The File Is Not An Excel File");
             }

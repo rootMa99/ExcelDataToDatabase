@@ -22,7 +22,7 @@ public class Personel {
     private String nom;
     @Column(name="prenom", nullable = false, unique = false)
     private String prenom;
-    @Column(name = "cin", nullable = false, unique = true)
+    @Column(name = "cin", nullable = false, unique = false)
     private String cin;
     @Column(name = "categorie", nullable = false)
     private String categorie;
