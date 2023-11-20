@@ -250,6 +250,7 @@ public class FormationServiceImpl implements FormationService {
                     Formation formation1=new Formation();
                     Personel personel=personelRepo.findByMatricule(f.getMatricule());
                     if (personel==null){
+                        f.setFormationId(utils.getFormationId(22));
                         notFound.add(f);
                         continue;
                     }
