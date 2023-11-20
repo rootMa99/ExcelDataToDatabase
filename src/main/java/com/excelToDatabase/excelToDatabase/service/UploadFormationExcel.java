@@ -43,7 +43,6 @@ public class UploadFormationExcel {
                     switch (cellIndex){
 
                         case 0-> {
-                            System.out.println(cell.getCellType());
                             if(cell.getCellType()==BLANK){
                                 done=true;
                             }

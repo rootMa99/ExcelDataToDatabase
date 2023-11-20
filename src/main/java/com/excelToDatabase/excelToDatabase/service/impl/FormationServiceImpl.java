@@ -257,6 +257,7 @@ public class FormationServiceImpl implements FormationService {
                     BeanUtils.copyProperties(f,formation1);
                     formation1.setPersonelDetails(personel);
                       //formationRepo.save(formation1);
+                    System.out.println(personel.getFormations().get(0));
                     formationList.add(formation1);
                 }
                 formationRepo.saveAll(formationList);
