@@ -269,7 +269,6 @@ public class FormationServiceImpl implements FormationService {
                                         && f.getCategorieFormation().equals(fr.getCategorieFormation())
                                         && f.getDureePerHour()==fr.getDureePerHour()){
                                     found=true;
-                                    System.out.println("formation already existing");
                                     break;
                                 }
                             }
@@ -277,7 +276,6 @@ public class FormationServiceImpl implements FormationService {
                                 f.setFormationId(utils.getFormationId(22));
                                 BeanUtils.copyProperties(f,formation1);
                                 formationList.add(formation1);
-                                System.out.println("formation added");
                             }
                         }
                 }
