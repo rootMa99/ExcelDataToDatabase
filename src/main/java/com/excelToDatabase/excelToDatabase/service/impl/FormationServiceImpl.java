@@ -248,17 +248,37 @@ public class FormationServiceImpl implements FormationService {
                 List<Formation>formationList= new ArrayList<>();
                 for (FormationFromExcel f:formation){
                     Formation formation1=new Formation();
-                    f.setFormationId(utils.getFormationId(22));
                     Personel personel=personelRepo.findByMatricule(f.getMatricule());
                     if (personel==null){
                         notFound.add(f);
                         continue;
                     }
-                    BeanUtils.copyProperties(f,formation1);
                     formation1.setPersonelDetails(personel);
                       //formationRepo.save(formation1);
-                    System.out.println(personel.getFormations().get(0));
-                    formationList.add(formation1);
+                    if (personel.getFormations().isEmpty()){
+                        f.setFormationId(utils.getFormationId(22));
+                        BeanUtils.copyProperties(f,formation1);
+                        formationList.add(formation1);
+                    }else{
+                        boolean found=false;
+                            for (Formation fr: personel.getFormations()){
+                                if (f.getDateDebut().equals(fr.getDateDebut())
+                                        && f.getDateFin().equals(fr.getDateFin())
+                                        && f.getType().equals(fr.getType())
+                                        && f.getCategorieFormation().equals(fr.getCategorieFormation())
+                                        && f.getDureePerHour()==fr.getDureePerHour()){
+                                    found=true;
+                                    System.out.println("formation already existing");
+                                    break;
+                                }
+                            }
+                            if (!found){
+                                f.setFormationId(utils.getFormationId(22));
+                                BeanUtils.copyProperties(f,formation1);
+                                formationList.add(formation1);
+                                System.out.println("formation added");
+                            }
+                        }
                 }
                 formationRepo.saveAll(formationList);
             } catch (IOException e) {
