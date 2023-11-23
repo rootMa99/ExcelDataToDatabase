@@ -79,6 +79,24 @@ public class FormationController {
                 .getPersonelData()).withRel("personels");
         return CollectionModel.of(fpr, selfLink, personelsLink);
     }
+
+    @PostMapping(path = "/formations/notCompleted")
+    public List<FormationPersonelRest> getEmployeeNotform(@RequestBody FormationDateRange fdr){
+
+        ModelMapper mp= new ModelMapper();
+        mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+        List<FormationDto> formationDtoList= formationService.getEmployeeNotForm
+                (fdr.getType(), fdr.getStartDate(), fdr.getEndDate(), fdr.getCategoriePersonel());
+        List<FormationPersonelRest> formationPersonelRestList= new ArrayList<>();
+        for (FormationDto fdto: formationDtoList){
+            FormationPersonelRest fpr= mp.map(fdto, FormationPersonelRest.class);
+            formationPersonelRestList.add(fpr);
+        }
+
+        return formationPersonelRestList;
+    }
+
     @PostMapping(path = "/formations/type/categorie/percat")
     public CollectionModel<FormationPersonelRest> getFormationByCatTypeRangeFonc(
                                                                       @RequestBody FormationDateRange fdr){

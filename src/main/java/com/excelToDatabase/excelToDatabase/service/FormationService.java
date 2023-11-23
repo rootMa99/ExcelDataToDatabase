@@ -26,5 +26,8 @@ public interface FormationService {
     List<FormationDto> getDashboardData(String categorieFormation, String type, Date StartDate, Date endDate,
                                         String personelcategorie, String personelDepartement);
     SelectHelper getAllTypeExist();
+
+    List<FormationDto> getEmployeeNotForm( String type,
+                                          Date startDate, Date endDate, String fonction);
     void deleteFormation(String formationId);
 }

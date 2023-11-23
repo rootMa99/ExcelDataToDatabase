@@ -29,6 +29,26 @@ public class FormationServiceImpl implements FormationService {
     private FormationRepo formationRepo;
 
 
+    @Override
+    public List<FormationDto> getEmployeeNotForm(String type, Date startDate, Date endDate, String fonction) {
+
+        ModelMapper mp= new ModelMapper();
+        mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        List<Formation> formationList= new ArrayList<>();
+        List<FormationDto> formationDtoList=new ArrayList<>();
+        if (type!=null && fonction!=null){
+            formationList= formationRepo.findAllByTypeNotAndDateDebutBetweenAndPersonelDetailsCategorie
+                    (type, startDate, endDate, fonction);
+        }
+        for (Formation f:formationList){
+            FormationDto fdto= mp.map(f, FormationDto.class);
+            formationDtoList.add(fdto);
+        }
+
+
+        return formationDtoList;
+    }
+
     public List<Formation> getMinimize(String categorie, String type, Date startDate, Date endDate,
                                        String fonction){
         List<Formation> formationList=new ArrayList<>();
@@ -276,6 +296,7 @@ public class FormationServiceImpl implements FormationService {
                                 f.setFormationId(utils.getFormationId(22));
                                 BeanUtils.copyProperties(f,formation1);
                                 formationList.add(formation1);
+                                System.out.println("formation added "+ personel.getMatricule());
                             }
                         }
                 }
