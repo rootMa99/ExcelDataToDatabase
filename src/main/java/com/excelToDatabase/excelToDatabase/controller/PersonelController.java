@@ -29,14 +29,14 @@ public class PersonelController {
 
 
 
-    @PostMapping(path = "/personels/notComplete")
+        @PostMapping(path = "/personels/notComplete")
     public CollectionModel<PersonelRestReporting> getPersonelNotComplete(@RequestBody FormationDateRange fdr){
          List<PersonelRestReporting>prr=  personelService.getPersonelNotComplete(fdr);
         Link selfLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
                 .getPersonelNotComplete(fdr)).withSelfRel();
         Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
                 .getPersonelData()).withRel("personels");
-         return null;
+         return CollectionModel.of(prr, selfLink, personelsLink);
     }
     @PostMapping(path = "/personel")
     public EntityModel<OperationStatusResult> uploadPersonelData(@RequestParam("file")MultipartFile file)
