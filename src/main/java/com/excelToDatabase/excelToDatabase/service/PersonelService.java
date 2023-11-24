@@ -2,12 +2,15 @@ package com.excelToDatabase.excelToDatabase.service;
 
 import com.excelToDatabase.excelToDatabase.domain.Personel;
 import com.excelToDatabase.excelToDatabase.exception.FileStorageException;
+import com.excelToDatabase.excelToDatabase.model.FormationDateRange;
 import com.excelToDatabase.excelToDatabase.model.PersonelRest;
+import com.excelToDatabase.excelToDatabase.model.PersonelRestReporting;
 import com.excelToDatabase.excelToDatabase.repository.PersonelRepo;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -20,6 +23,27 @@ public class PersonelService {
 
     private PersonelRepo personelRepo;
 
+
+    public List<PersonelRestReporting> getPersonelNotComplete(FormationDateRange fdr){
+        ModelMapper mp=new ModelMapper();
+        mp.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        List<Personel> personelList=new ArrayList<>();
+        if (fdr.getCategoriePersonel()!=null && fdr.getStartDate()!=null&& fdr.getEndDate()!=null&& fdr.getType()!=null){
+            personelList= personelRepo.findByCategorieAndFormationsDateDebutBetweenAndFormationsTypeNot
+                    (fdr.getCategoriePersonel(), fdr.getStartDate(), fdr.getEndDate(), fdr.getType());
+        }
+        if (fdr.getCategoriePersonel()==null){
+            personelList= personelRepo.findByFormationsDateDebutBetweenAndFormationsTypeNot
+                    (fdr.getStartDate(), fdr.getEndDate(), fdr.getType());
+        }
+
+        List<PersonelRestReporting> prr= new ArrayList<>();
+        for (Personel p: personelList){
+            PersonelRestReporting pr=mp.map(p, PersonelRestReporting.class);
+            prr.add(pr);
+        }
+        return prr;
+    }
     public void savePersonelDataToDataBase(MultipartFile file) throws IllegalAccessException {
         if (UploadExcelAndExtractData.isValidFormat(file)){
             try {

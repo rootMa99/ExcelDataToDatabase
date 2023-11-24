@@ -2,9 +2,7 @@ package com.excelToDatabase.excelToDatabase.controller;
 
 
 import com.excelToDatabase.excelToDatabase.domain.Personel;
-import com.excelToDatabase.excelToDatabase.model.OperationStatus;
-import com.excelToDatabase.excelToDatabase.model.OperationStatusResult;
-import com.excelToDatabase.excelToDatabase.model.PersonelRest;
+import com.excelToDatabase.excelToDatabase.model.*;
 import com.excelToDatabase.excelToDatabase.service.PersonelService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -29,6 +27,17 @@ public class PersonelController {
 
     private PersonelService personelService;
 
+
+
+    @PostMapping(path = "/personels/notComplete")
+    public CollectionModel<PersonelRestReporting> getPersonelNotComplete(@RequestBody FormationDateRange fdr){
+         List<PersonelRestReporting>prr=  personelService.getPersonelNotComplete(fdr);
+        Link selfLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
+                .getPersonelNotComplete(fdr)).withSelfRel();
+        Link personelsLink= WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PersonelController.class)
+                .getPersonelData()).withRel("personels");
+         return null;
+    }
     @PostMapping(path = "/personel")
     public EntityModel<OperationStatusResult> uploadPersonelData(@RequestParam("file")MultipartFile file)
             throws IllegalAccessException {
